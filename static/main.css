@@ -1,0 +1,29 @@
+body {
+   background-color: #abc;
+}
+
+body.multiview {
+   margin: 0;
+}
+
+body.multiview iframe {
+	position:absolute;
+	top: 0;
+	left:0;
+	right:0;
+	bottom:0;
+}
+
+#beendicator {
+    display: none;
+}
+
+tr.t-5 td {
+	background-color: orange;
+}
+
+
+tr.t-1 td {
+	background-color: red;
+	color: white;
+}

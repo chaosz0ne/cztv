@@ -1,0 +1,52 @@
+import os
+## Again we import the necessary socket python module
+import socket
+## Here we define the UDP IP address as well as the port number that we have
+## already defined in the client python script.
+UDP_IP_ADDRESS = "127.0.0.1"
+UDP_PORT_NO = 7000
+serverSock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+## One difference is that we will have to bind our declared IP address
+## and port number to our newly declared serverSock
+serverSock.bind((UDP_IP_ADDRESS, UDP_PORT_NO))
+
+
+
+# screen "names" to xinerama screen number
+screen_map = dict(S1=1, S2=2, S3=3)
+for sid, xscr in screen_map.items():
+    os.unlink(f'/tmp/mplayerctrl{sid}')
+    os.mkfifo(f'/tmp/mplayerctrl{sid}')
+    print(f'mplayer -xineramascreen {xscr} -fs -idle -really-quiet -slave -input file=/tmp/mplayerctrl{sid} &')
+    #os.system(f'mplayer -xineramascreen {xscr} -fs -idle -really-quiet -slave -input file=/tmp/mplayerctrl{sid} &')
+import json
+while True:
+    data, addr = serverSock.recvfrom(1024)
+    commands = data.decode("utf8").splitlines()
+    for cmd in commands:
+        if cmd == 'play_current':
+            with open('play.json') as playconf:
+                for screen_id, filepath in json.loads(playconf.read()).items():
+                    if filepath == '':
+                        continue
+                    xscreen = screen_map[screen_id]
+                    mplayercmd = f'loadfile {filepath}\n'
+                    with open(f'/tmp/mplayerctrl{screen_id}', 'a') as ctrl:
+                        ctrl.write(mplayercmd)
+        elif cmd == 'stop_current':
+            for sid in ('S1', 'S2', 'S3'):
+                with open(f'/tmp/mplayerctrl{sid}', 'a') as ctrl:
+                    ctrl.write("stop\n")
+
+        elif cmd.startswith('ninja'):
+            if 's1' in cmd:
+                scr = '1'
+            elif 's2' in cmd:
+                scr = '2'
+            elif 's3' in cmd:
+                scr = '3'
+            if cmd.endswith('start'):
+                os.system(f'./start_ninja.sh {scr}')
+            elif cmd.endswith('stop'):
+                os.system(f'./stop_ninja.sh {scr}')
+

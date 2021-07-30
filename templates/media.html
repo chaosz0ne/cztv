@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='main.css') }}">
+    <title>chaoszone.tv media control</title>
+  </head>
+  <body>
+  
+    {% if  not edit %}
+    <h3>PLAY CUR:</h3>
+    <table border="1">
+      <tr>
+        <th>SCR</th>
+        <th>Filename</th>
+        <th>Length</th>
+        <th>Remaining</th>
+      </tr>
+      {% for scr in screens %}
+      <tr id="{{ scr }}">
+        <td><strong>{{ scr }}</strong></td>
+        <td class="filename">Loading …</td>
+        <td class="length"></td>
+        <td class="remaining"></td>
+      </tr>
+      {% endfor %}
+    </table>
+    <a href="media.html?edit">[ Edit ]</a>
+    {% endif %}
+    
+    {% if edit %}
+    <h4>Edit PLAY CUR:</h4>
+	
+    <form action="/set_media">
+	<label for="s1_sel"><strong>S1:</strong></label>
+	<select name="S1" id="s1_sel" type="list">
+		<option value="">blank</option>
+		{% for filename in filelist %}
+		<option value="{{ filename }}">{{ filename }}</option>
+		{% endfor %}
+	</select><br/>
+	<label for="s2_sel"><strong>S2:</strong> </label>
+	<select name="S2" id="s2_sel" type="list">
+		<option value="">blank</option>
+		{% for filename in filelist %}
+		<option value="{{ filename }}">{{ filename }}</option>
+		{% endfor %}
+	</select><br/>
+	<label for="s3_sel"><strong>S3:</strong> </label>
+	<select name="S3" id="s3_sel" type="list">
+		<option value="">blank</option>
+		{% for filename in filelist %}
+		<option value="{{ filename }}">{{ filename }}</option>
+		{% endfor %}
+	</select><br/>
+	<input type="submit" value="Save" />
+    </form>
+    {% endif %}
+  
+  <h3>Ninja Links for Camera/Screenshare</h3>
+  
+  <span id="beendicator">🐝 <strong>Good. Link for <span id="linkfor"></span> copied.</strong> 🐝<br/></span>
+  
+  <strong>S1 (Slides):</strong> 
+<button onclick="copyToClipboard('#s1_sec', 'S1')">Copy</button> <a href="/regenerate_ninja_link?scr=S1">[regenerate]</a>
+  <span id="s1_sec" >https://ninja.c3voc.de/?push={{ secrets['S1'] }}</span> <br/>
+  
+  <strong>S2 (Speaker):</strong> 
+<button onclick="copyToClipboard('#s2_sec', 'S2')">Copy</button> <a href="/regenerate_ninja_link?scr=S2">[regenerate]</a>
+  <span id="s2_sec" >https://ninja.c3voc.de/?push={{ secrets['S2'] }}</span> <br/>
+  
+  <strong>S3 (Herald):</strong> 
+<button onclick="copyToClipboard('#s3_sec', 'S3')">Copy</button> <a href="/regenerate_ninja_link?scr=S3">[regenerate]</a>
+  <span id="s3_sec" >https://ninja.c3voc.de/?push={{ secrets['S3'] }}</span> <br/>
+  
+  
+  
+  <h3>Build your own setup with these links:</h3>
+   <a href="https://studio.chaoszone.tv/obs_multiview.html" target="_blank">
+  OBS Multiview
+  </a><br />
+  <a href="https://studio.chaoszone.tv/programm.html" target="_blank">
+  Programm
+  </a><br />
+  <a href="https://studio.chaoszone.tv/emulator.html" target="_blank">
+  Streamdeck Emulator
+  </a><br />
+   <a href="https://studio.chaoszone.tv/media.html" target="_blank">
+Media control
+  </a><br />
+  
+  
+    <script src="{{ url_for('static',filename='clipboard.min.js') }}"></script>
+    <script src="{{ url_for('static',filename='jquery-3.5.1.min.js') }}"></script>
+    <script src="{{ url_for('static',filename='main.js') }}"></script>    
+  </body>
+</html>
